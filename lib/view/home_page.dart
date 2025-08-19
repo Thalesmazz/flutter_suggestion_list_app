@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:login_screen_app/api_service.dart';
-import 'package:login_screen_app/suggestion_model.dart';
-import 'package:login_screen_app/details_page.dart';
+import 'package:login_screen_app/services/api_service.dart';
+import 'package:login_screen_app/models/suggestion_model.dart';
+import 'package:login_screen_app/view/details_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
