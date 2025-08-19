@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:login_screen_app/services/api_service.dart';
 import 'package:login_screen_app/models/suggestion_model.dart';
 import 'package:login_screen_app/view/details_page.dart';
+import 'package:provider/provider.dart';
+import 'package:login_screen_app/viewmodel/home_viewmodel.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,12 +13,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late Future<List<Suggestion>> _suggestionsFuture;
 
   @override
   void initState() {
     super.initState();
-    _suggestionsFuture = ApiService.fetchSuggestions();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<HomeViewModel>(context, listen: false).fetchSuggestions();
+    });
   }
 
   Future<void> _showLogoutDialog() async {
@@ -71,72 +74,60 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: FutureBuilder<List<Suggestion>>(
-        future: _suggestionsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          else if (snapshot.hasError) {
-            return Center(
-              child: Text('Erro: ${snapshot.error}'),
-            );
-          }
-          else if (snapshot.hasData) {
-            final List<Suggestion> suggestions = snapshot.data!;
-
-            return ListView.builder(
-              itemCount: suggestions.length,
-              itemBuilder: (context, index) {
-                final Suggestion suggestion = suggestions[index];
-
-                return Card(
-                  margin:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: ListTile(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              DetailPage(suggestion: suggestion),
+      body: Consumer<HomeViewModel>(
+        builder: (context, viewModel, child) {
+          switch (viewModel.state) {
+            case ViewState.loading:
+              return const Center(child: CircularProgressIndicator());
+            case ViewState.error:
+              return Center(child: Text(viewModel.errorMessage));
+            case ViewState.success:
+              return ListView.builder(
+                itemCount: viewModel.suggestions.length,
+                itemBuilder: (context, index) {
+                  final Suggestion suggestion = viewModel.suggestions[index];
+                  return Card(
+                    margin:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: ListTile(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                DetailPage(suggestion: suggestion),
+                          ),
+                        );
+                      },
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 15.0, vertical: 10.0),
+                      horizontalTitleGap: 15.0,
+                      leading: ClipRRect(
+                        borderRadius: BorderRadius.circular(5.0),
+                        child: Image.network(
+                          suggestion.imageSmallUrl,
+                          fit: BoxFit.contain,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(Icons.broken_image, size: 50);
+                          },
                         ),
-                      );
-                    },
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 15.0, vertical: 10.0),
-                    horizontalTitleGap: 15.0,
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(5.0),
-                      child: Image.network(
-                        suggestion.imageSmallUrl,
-                        fit: BoxFit.contain,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        },
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(Icons.broken_image, size: 50);
-                        },
                       ),
+                      title: Text(
+                        suggestion.title,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(suggestion.shortDescription),
                     ),
-                    title: Text(
-                      suggestion.title,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Text(suggestion.shortDescription),
-                  ),
-                );
-              },
-            );
-          }
-          else {
-            return const Center(
-              child: Text('Nenhuma sugestão encontrada.'),
-            );
+                  );
+                },
+              );
+            default: // idle
+              return const Center(child: Text('Bem-vindo!'));
           }
         },
       ),
