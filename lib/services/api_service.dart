@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:login_screen_app/suggestion_model.dart';
+import 'package:login_screen_app/models/suggestion_model.dart';
 
 class ApiService {
   static const String _url =

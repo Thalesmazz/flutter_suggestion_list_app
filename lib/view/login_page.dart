@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:login_screen_app/home_page.dart';
+import 'package:login_screen_app/view/home_page.dart';
+import 'package:provider/provider.dart';
+import 'package:login_screen_app/viewmodel/home_viewmodel.dart';
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -23,7 +26,12 @@ class _LoginPageState extends State<LoginPage> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
+        MaterialPageRoute(
+          builder: (context) => ChangeNotifierProvider(
+            create: (context) => HomeViewModel(),
+            child: const HomePage(),
+          ),
+        ),
       );
     } else {
       print('Erro de validação. Preencha os campos corretamente.');

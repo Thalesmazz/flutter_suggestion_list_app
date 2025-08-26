@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:login_screen_app/suggestion_model.dart';
+import 'package:login_screen_app/models/suggestion_model.dart';
 
 class DetailPage extends StatelessWidget {
   final Suggestion suggestion;
