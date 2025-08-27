@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:login_screen_app/models/suggestion_model.dart';
-import 'package:login_screen_app/services/api_service.dart';
+import 'package:login_screen_app/repositories/suggestion_repository.dart';
 
 enum ViewState { idle, loading, success, error }
 
 class HomeViewModel extends ChangeNotifier {
+  final SuggestionRepository _repository = SuggestionRepository();
   ViewState _state = ViewState.idle;
   List<Suggestion> _suggestions = [];
   String _errorMessage = '';
@@ -21,7 +22,7 @@ class HomeViewModel extends ChangeNotifier {
   Future<void> fetchSuggestions() async {
     _setState(ViewState.loading);
     try {
-      final fetchedSuggestions = await ApiService.fetchSuggestions();
+      final fetchedSuggestions = await _repository.fetchSuggestions();
       _suggestions = fetchedSuggestions;
       _setState(ViewState.success);
     } catch (e) {
