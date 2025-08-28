@@ -3,6 +3,7 @@ import 'package:login_screen_app/models/suggestion_model.dart';
 import 'package:login_screen_app/view/details_page.dart';
 import 'package:login_screen_app/viewmodel/home_viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'package:login_screen_app/view/widgets/logout_dialog.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -15,7 +16,16 @@ class HomePage extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.red),
-            onPressed: () => _showLogoutDialog(context),
+            onPressed: () async {
+              final bool? shouldLogout = await showDialog<bool>(
+                context: context,
+                builder: (context) => const LogoutDialog(),
+              );
+
+              if (shouldLogout == true) {
+                Navigator.of(context).pushReplacementNamed('/login');
+              }
+            },
           ),
         ],
       ),
