@@ -28,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
         context,
         MaterialPageRoute(
           builder: (context) => ChangeNotifierProvider(
-            create: (context) => HomeViewModel(),
+            create: (context) => HomeViewModel()..fetchSuggestions(),
             child: const HomePage(),
           ),
         ),

@@ -1,63 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:login_screen_app/models/suggestion_model.dart';
 import 'package:login_screen_app/view/details_page.dart';
-import 'package:provider/provider.dart';
 import 'package:login_screen_app/viewmodel/home_viewmodel.dart';
+import 'package:provider/provider.dart';
 
-
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<HomeViewModel>(context, listen: false).fetchSuggestions();
-    });
-  }
-
-  Future<void> _showLogoutDialog() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const Text('Confirmar Logout'),
-          content: const SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('Você realmente deseja sair?'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancelar'),
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-              },
-            ),
-            TextButton(
-              child: const Text(
-                'Sair',
-                style: TextStyle(color: Colors.red),
-              ),
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                Navigator.of(context).pushReplacementNamed('/login');
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,11 +14,8 @@ class _HomePageState extends State<HomePage> {
         title: const Text('Lista de investimentos'),
         actions: [
           IconButton(
-            icon: const Icon(
-              Icons.logout,
-              color: Colors.red,
-            ),
-            onPressed: _showLogoutDialog,
+            icon: const Icon(Icons.logout, color: Colors.red),
+            onPressed: () => _showLogoutDialog(context),
           ),
         ],
       ),
@@ -87,8 +32,8 @@ class _HomePageState extends State<HomePage> {
                 itemBuilder: (context, index) {
                   final Suggestion suggestion = viewModel.suggestions[index];
                   return Card(
-                    margin:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 8),
                     child: ListTile(
                       onTap: () {
                         Navigator.push(
@@ -126,11 +71,45 @@ class _HomePageState extends State<HomePage> {
                   );
                 },
               );
-            default: // idle
+            default:
               return const Center(child: Text('Bem-vindo!'));
           }
         },
       ),
     );
   }
+}
+
+Future<void> _showLogoutDialog(BuildContext context) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext dialogContext) {
+      return AlertDialog(
+        title: const Text('Confirmar Logout'),
+        content: const SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Text('Você realmente deseja sair?'),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Cancelar'),
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+            },
+          ),
+          TextButton(
+            child: const Text('Sair', style: TextStyle(color: Colors.red)),
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              Navigator.of(context).pushReplacementNamed('/login');
+            },
+          ),
+        ],
+      );
+    },
+  );
 }
