@@ -1,60 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:login_screen_app/view/home_page.dart';
-import 'package:provider/provider.dart';
 import 'package:login_screen_app/viewmodel/home_viewmodel.dart';
+import 'package:login_screen_app/viewmodel/login_viewmodel.dart';
+import 'package:provider/provider.dart';
 
-
-class LoginPage extends StatefulWidget {
+class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-
-class _LoginPageState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>();
-
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
-  void _login() {
-    if (_formKey.currentState!.validate()) {
-      print('Login bem-sucedido!');
-      print('Email: ${_emailController.text}');
-      print('Senha: ${_passwordController.text}');
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ChangeNotifierProvider(
-            create: (context) => HomeViewModel()..fetchSuggestions(),
-            child: const HomePage(),
-          ),
-        ),
-      );
-    } else {
-      print('Erro de validação. Preencha os campos corretamente.');
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final TextEditingController emailController = TextEditingController();
+    final TextEditingController passwordController = TextEditingController();
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+    final loginViewModel = context.watch<LoginViewModel>();
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(
+        title: const Text('Login'),
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: Form(
-            key: _formKey,
+            key: formKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                const Icon(Icons.lock_person, size: 100, color: Colors.blue),
+                const Icon(
+                  Icons.lock_person,
+                  size: 100,
+                  color: Colors.blue,
+                ),
                 const SizedBox(height: 48.0),
                 TextFormField(
-                  controller: _emailController,
+                  controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(
                     labelText: 'Email',
@@ -74,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 16.0),
                 TextFormField(
-                  controller: _passwordController,
+                  controller: passwordController,
                   obscureText: true,
                   decoration: const InputDecoration(
                     labelText: 'Senha',
@@ -93,42 +74,51 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 ),
                 const SizedBox(height: 24.0),
+                if (loginViewModel.state == LoginState.error)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: Text(
+                      loginViewModel.errorMessage,
+                      style: const TextStyle(color: Colors.red),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                 ElevatedButton(
-                  onPressed: _login,
+                  onPressed: loginViewModel.state == LoginState.loading
+                      ? null
+                      : () async {
+                          if (formKey.currentState!.validate()) {
+                            final bool isLoggedIn = await loginViewModel.login(
+                              emailController.text,
+                              passwordController.text,
+                            );
+
+                            if (context.mounted && isLoggedIn) {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChangeNotifierProvider(
+                                    create: (context) =>
+                                        HomeViewModel()..fetchSuggestions(),
+                                    child: const HomePage(),
+                                  ),
+                                ),
+                              );
+                            }
+                          }
+                        },
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text(
-                    'Entrar',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
-                  ),
-                ),
-                const SizedBox(height: 16.0),
-                TextButton(
-                  onPressed: () {
-                    print('Esqueceu a senha?');
-                  },
-                  child: const Text('Esqueceu a senha?'),
-                ),
-                const SizedBox(height: 8.0),
-                OutlinedButton(
-                  onPressed: () {
-                    print('Criar nova conta');
-                  },
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    side: const BorderSide(color: Colors.blue),
-                  ),
-                  child: const Text(
-                    'Criar Conta',
-                    style: TextStyle(fontSize: 18, color: Colors.blue),
-                  ),
+                  child: loginViewModel.state == LoginState.loading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                          'Entrar',
+                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        ),
                 ),
               ],
             ),
