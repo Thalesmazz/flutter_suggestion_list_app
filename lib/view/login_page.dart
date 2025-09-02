@@ -16,9 +16,7 @@ class LoginPage extends StatelessWidget {
     final loginViewModel = context.watch<LoginViewModel>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
+      appBar: AppBar(title: const Text('Login')),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
@@ -28,11 +26,7 @@ class LoginPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                const Icon(
-                  Icons.lock_person,
-                  size: 100,
-                  color: Colors.blue,
-                ),
+                const Icon(Icons.lock_person, size: 100, color: Colors.blue),
                 const SizedBox(height: 48.0),
                 TextFormField(
                   controller: emailController,
@@ -43,15 +37,7 @@ class LoginPage extends StatelessWidget {
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.email),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, insira seu email';
-                    }
-                    if (!value.contains('@') || !value.contains('.')) {
-                      return 'Email inválido';
-                    }
-                    return null;
-                  },
+                  validator: loginViewModel.validateEmail,
                 ),
                 const SizedBox(height: 16.0),
                 TextFormField(
@@ -63,15 +49,7 @@ class LoginPage extends StatelessWidget {
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.lock),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, insira sua senha';
-                    }
-                    if (value.length < 6) {
-                      return 'A senha deve ter pelo menos 6 caracteres';
-                    }
-                    return null;
-                  },
+                  validator: loginViewModel.validatePassword,
                 ),
                 const SizedBox(height: 24.0),
                 if (loginViewModel.state == LoginState.error)
