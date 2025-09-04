@@ -3,6 +3,7 @@ import 'package:login_screen_app/view/home_page.dart';
 import 'package:login_screen_app/viewmodel/home_viewmodel.dart';
 import 'package:login_screen_app/viewmodel/login_viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -72,16 +73,7 @@ class LoginPage extends StatelessWidget {
                             );
 
                             if (context.mounted && isLoggedIn) {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ChangeNotifierProvider(
-                                    create: (context) =>
-                                        HomeViewModel()..fetchSuggestions(),
-                                    child: const HomePage(),
-                                  ),
-                                ),
-                              );
+                              context.go('/home');
                             }
                           }
                         },

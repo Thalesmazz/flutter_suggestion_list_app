@@ -17,12 +17,13 @@ class Suggestion {
     return Suggestion(
       imageSmallUrl: json['imageSmall'] ?? 'https://via.placeholder.com/150',
       title: json['name'] ?? 'Título não encontrado',
-      shortDescription:
-      json['shortDescription'] ?? 'Descrição não encontrada',
-      imageLargeUrl: json['imageLarge'] ??
+      shortDescription: json['shortDescription'] ?? 'Descrição não encontrada',
+      imageLargeUrl:
+          json['imageLarge'] ??
           json['imageSmall'] ??
           'https://via.placeholder.com/400',
-      fullDescription: json['description'] ??
+      fullDescription:
+          json['description'] ??
           json['shortDescription'] ??
           'Descrição completa não encontrada',
     );

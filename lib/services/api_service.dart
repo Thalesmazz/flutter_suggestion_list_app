@@ -3,8 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:login_screen_app/models/suggestion_model.dart';
 
 class ApiService {
-  final String _url =
-      'https://empiricus-app.empiricus.com.br/mock/list.json';
+  final String _url = 'https://empiricus-app.empiricus.com.br/mock/list.json';
 
   Future<List<Suggestion>> fetchSuggestions() async {
     try {
