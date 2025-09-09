@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:login_screen_app/config.dart';
 
 enum LoginState { idle, loading, success, error }
 
@@ -19,7 +20,7 @@ class LoginViewModel extends ChangeNotifier {
 
     await Future.delayed(const Duration(seconds: 2));
 
-    if (email == 'thales@empiricus.com.br' && password == '123456') {
+    if (email == AppConfig.testEmail && password == AppConfig.testPassword) {
       _setState(LoginState.success);
       return true;
     } else {

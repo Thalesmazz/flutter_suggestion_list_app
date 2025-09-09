@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:login_screen_app/models/suggestion_model.dart';
+import 'package:login_screen_app/config.dart';
 
 class ApiService {
-  final String _url =
-      'https://empiricus-app.empiricus.com.br/mock/list.json';
+  final String _url = AppConfig.baseUrl;
 
   Future<List<Suggestion>> fetchSuggestions() async {
     try {
