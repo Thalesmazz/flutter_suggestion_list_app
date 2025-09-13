@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../viewmodel/login_viewmodel.dart';
+import '../models/suggestion_model.dart';
+import '../viewmodel/home_viewmodel.dart';
+import './widgets/logout_dialog.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -76,13 +79,14 @@ class LoginPage extends StatelessWidget {
                           }
                         },
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
                     minimumSize: const Size(double.infinity, 50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                   child: loginViewModel.state == LoginState.loading
-                      ? const CircularProgressIndicator(color: Colors.white)
+                      ? const CircularProgressIndicator(color: Colors.green)
                       : const Text(
                           'Entrar',
                           style: TextStyle(fontSize: 18, color: Colors.white),
