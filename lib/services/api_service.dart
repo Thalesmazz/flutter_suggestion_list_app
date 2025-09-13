@@ -1,19 +1,21 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:login_screen_app/models/suggestion_model.dart';
-import 'package:login_screen_app/config.dart';
+import '../entities/suggestion_entity.dart';
+import '../config.dart';
 
 class ApiService {
   final String _url = AppConfig.baseUrl;
 
-  Future<List<Suggestion>> fetchSuggestions() async {
+  Future<List<SuggestionEntity>> fetchSuggestions() async {
     try {
       final response = await http.get(Uri.parse(_url));
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
         if (data.containsKey('groups') && data['groups'] is List) {
           final List<dynamic> groupsJson = data['groups'];
-          return groupsJson.map((json) => Suggestion.fromJson(json)).toList();
+          return groupsJson
+              .map((json) => SuggestionEntity.fromJson(json))
+              .toList();
         } else {
           throw Exception(
             'Chave "groups" não encontrada ou não é uma lista no JSON.',

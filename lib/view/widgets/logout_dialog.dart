@@ -9,9 +9,7 @@ class LogoutDialog extends StatelessWidget {
       title: const Text('Confirmar Logout'),
       content: const SingleChildScrollView(
         child: ListBody(
-          children: <Widget>[
-            Text('Você realmente deseja sair?'),
-          ],
+          children: <Widget>[Text('Você realmente deseja sair?')],
         ),
       ),
       actions: <Widget>[
