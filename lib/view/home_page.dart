@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:login_screen_app/models/suggestion_model.dart';
-import 'package:login_screen_app/view/details_page.dart';
-import 'package:login_screen_app/viewmodel/home_viewmodel.dart';
+import 'package:go_router/go_router.dart';
+import '../models/suggestion_model.dart';
+import '../viewmodel/home_viewmodel.dart';
 import 'package:provider/provider.dart';
-import 'package:login_screen_app/view/widgets/logout_dialog.dart';
+import './widgets/logout_dialog.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -23,7 +23,7 @@ class HomePage extends StatelessWidget {
               );
 
               if (shouldLogout == true) {
-                Navigator.of(context).pushReplacementNamed('/login');
+                context.go('/login');
               }
             },
           ),
@@ -43,19 +43,17 @@ class HomePage extends StatelessWidget {
                   final Suggestion suggestion = viewModel.suggestions[index];
                   return Card(
                     margin: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 8),
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
                     child: ListTile(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                DetailPage(suggestion: suggestion),
-                          ),
-                        );
+                        context.go('/details', extra: suggestion);
                       },
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 15.0, vertical: 10.0),
+                        horizontal: 15.0,
+                        vertical: 10.0,
+                      ),
                       horizontalTitleGap: 15.0,
                       leading: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),
@@ -65,7 +63,8 @@ class HomePage extends StatelessWidget {
                           loadingBuilder: (context, child, loadingProgress) {
                             if (loadingProgress == null) return child;
                             return const Center(
-                                child: CircularProgressIndicator());
+                              child: CircularProgressIndicator(),
+                            );
                           },
                           errorBuilder: (context, error, stackTrace) {
                             return const Icon(Icons.broken_image, size: 50);
@@ -88,38 +87,4 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
-}
-
-Future<void> _showLogoutDialog(BuildContext context) async {
-  return showDialog<void>(
-    context: context,
-    barrierDismissible: false,
-    builder: (BuildContext dialogContext) {
-      return AlertDialog(
-        title: const Text('Confirmar Logout'),
-        content: const SingleChildScrollView(
-          child: ListBody(
-            children: <Widget>[
-              Text('Você realmente deseja sair?'),
-            ],
-          ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('Cancelar'),
-            onPressed: () {
-              Navigator.of(dialogContext).pop();
-            },
-          ),
-          TextButton(
-            child: const Text('Sair', style: TextStyle(color: Colors.red)),
-            onPressed: () {
-              Navigator.of(dialogContext).pop();
-              Navigator.of(context).pushReplacementNamed('/login');
-            },
-          ),
-        ],
-      );
-    },
-  );
 }
