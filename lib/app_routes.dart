@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:login_screen_app/models/suggestion_model.dart';
 import 'package:login_screen_app/view/details_page.dart';
 import 'package:login_screen_app/view/home_page.dart';
 import 'package:login_screen_app/view/login_page.dart';
 import 'package:login_screen_app/viewmodel/home_viewmodel.dart';
 import 'package:login_screen_app/viewmodel/login_viewmodel.dart';
-import 'package:provider/provider.dart';
+import 'package:login_screen_app/view/signup_page.dart';
+import 'package:login_screen_app/viewmodel/signup_viewmodel.dart';
 
 class AppRoutes {
   static final GoRouter _router = GoRouter(
@@ -32,6 +34,13 @@ class AppRoutes {
           final suggestion = state.extra as Suggestion;
           return DetailPage(suggestion: suggestion);
         },
+      ),
+      GoRoute(
+        path: '/signup',
+        builder: (context, state) => ChangeNotifierProvider(
+          create: (context) => SignUpViewModel(),
+          child: const SignUpPage(),
+        ),
       ),
     ],
   );

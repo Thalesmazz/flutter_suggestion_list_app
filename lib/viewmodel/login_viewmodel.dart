@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../services/auth_service.dart';
+import 'package:login_screen_app/services/auth_service.dart';
 
 enum LoginState { idle, loading, success, error }
 
@@ -56,7 +56,7 @@ class LoginViewModel extends ChangeNotifier {
 
   String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'A senha deve ter pelo menos 6 caracteres';
+      return 'Por favor, insira sua senha';
     }
     if (value.length < 6) {
       return 'A senha deve ter pelo menos 6 caracteres';
