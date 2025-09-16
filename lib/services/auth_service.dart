@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import './auth_exceptions.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -15,7 +16,16 @@ class AuthService {
       );
       return userCredential;
     } on FirebaseAuthException catch (e) {
-      rethrow;
+      switch (e.code) {
+        case 'user-not-found':
+        case 'invalid-email':
+        case 'invalid-credential':
+          throw UserNotFoundAuthException();
+        case 'wrong-password':
+          throw WrongPasswordAuthException();
+        default:
+          throw GenericAuthException();
+      }
     }
   }
 
@@ -31,7 +41,14 @@ class AuthService {
       );
       return userCredential;
     } on FirebaseAuthException catch (e) {
-      rethrow;
+      switch (e.code) {
+        case 'email-already-in-use':
+          throw EmailAlreadyInUseAuthException();
+        case 'weak-password':
+          throw WeakPasswordAuthException();
+        default:
+          throw GenericAuthException();
+      }
     }
   }
 
@@ -39,9 +56,7 @@ class AuthService {
     try {
       await _auth.signOut();
     } catch (e) {
-      print('Erro ao fazer logout: $e');
-      rethrow;
+      throw GenericAuthException();
     }
   }
 }
-

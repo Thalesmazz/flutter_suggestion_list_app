@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:login_screen_app/models/suggestion_model.dart';
 import 'package:login_screen_app/repositories/suggestion_repository.dart';
-import 'package:login_screen_app/services/auth_service.dart';
+import 'package:login_screen_app/repositories/auth_repository.dart';
 
 enum ViewState { idle, loading, success, error }
 
 class HomeViewModel extends ChangeNotifier {
   final SuggestionRepository _repository = SuggestionRepository();
-  final AuthService _authService = AuthService();
+  final AuthRepository _authRepository = AuthRepository();
+
   ViewState _state = ViewState.idle;
   List<Suggestion> _suggestions = [];
   String _errorMessage = '';
@@ -33,6 +34,6 @@ class HomeViewModel extends ChangeNotifier {
     }
   }
   Future<void> logOut() async {
-    await _authService.signOut();
+    await _authRepository.signOut();
   }
 }

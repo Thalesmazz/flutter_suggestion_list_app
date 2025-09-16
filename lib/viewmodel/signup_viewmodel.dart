@@ -1,17 +1,16 @@
 import 'package:flutter/foundation.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../services/auth_service.dart';
+import '../services/auth_exceptions.dart';
+import '../repositories/auth_repository.dart';
 import '../services/database_service.dart';
 
 enum SignUpState { idle, loading, success, error }
 
 class SignUpViewModel extends ChangeNotifier {
-  final AuthService _authService = AuthService();
+  final AuthRepository _authRepository = AuthRepository();
   final DatabaseService _databaseService = DatabaseService();
 
   SignUpState _state = SignUpState.idle;
   String _errorMessage = '';
-
   SignUpState get state => _state;
   String get errorMessage => _errorMessage;
 
@@ -28,7 +27,7 @@ class SignUpViewModel extends ChangeNotifier {
   }) async {
     _setState(SignUpState.loading);
     try {
-      final userCredential = await _authService.createUserWithEmailAndPassword(
+      final userCredential = await _authRepository.signUp(
         email: email,
         password: password,
       );
@@ -49,17 +48,8 @@ class SignUpViewModel extends ChangeNotifier {
 
       _setState(SignUpState.success);
       return true;
-    } on FirebaseAuthException catch (e) {
-      switch (e.code) {
-        case 'weak-password':
-          _errorMessage = 'A palavra-passe é muito fraca.';
-          break;
-        case 'email-already-in-use':
-          _errorMessage = 'Este email já está a ser utilizado.';
-          break;
-        default:
-          _errorMessage = 'Ocorreu um erro de autenticação.';
-      }
+    } on AuthException catch (e) {
+      _errorMessage = e.message;
       _setState(SignUpState.error);
       return false;
     } catch (e) {
@@ -103,4 +93,3 @@ class SignUpViewModel extends ChangeNotifier {
     return null;
   }
 }
-
