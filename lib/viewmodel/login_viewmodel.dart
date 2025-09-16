@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../services/auth_service.dart';
+import 'package:flutter/foundation.dart';
+import '../services/auth_exceptions.dart';
+import '../repositories/auth_repository.dart';
 
 enum LoginState { idle, loading, success, error }
 
 class LoginViewModel extends ChangeNotifier {
-  final AuthService _authService = AuthService();
+  final AuthRepository _authRepository = AuthRepository();
+
   LoginState _state = LoginState.idle;
   String _errorMessage = '';
 
@@ -20,25 +21,18 @@ class LoginViewModel extends ChangeNotifier {
   Future<bool> login(String email, String password) async {
     _setState(LoginState.loading);
     try {
-      await _authService.signInWithEmailAndPassword(
+      await _authRepository.signIn(
         email: email,
         password: password,
       );
       _setState(LoginState.success);
       return true;
-    } on FirebaseAuthException catch (e) {
-      switch (e.code) {
-        case 'user-not-found':
-        case 'invalid-email':
-          _errorMessage = 'Email não encontrado ou inválido.';
-          break;
-        case 'wrong-password':
-        case 'invalid-credential':
-          _errorMessage = 'Senha incorreta.';
-          break;
-        default:
-          _errorMessage = 'Ocorreu um erro inesperado. Tente novamente.';
-      }
+    } on AuthException catch (e) {
+      _errorMessage = e.message;
+      _setState(LoginState.error);
+      return false;
+    } catch (e) {
+      _errorMessage = 'Ocorreu um erro inesperado. Tente novamente.';
       _setState(LoginState.error);
       return false;
     }
@@ -46,7 +40,7 @@ class LoginViewModel extends ChangeNotifier {
 
   String? validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Por favor, insira seu email';
+      return 'Por favor, insira o seu email';
     }
     if (!value.contains('@') || !value.contains('.')) {
       return 'Email inválido';
@@ -56,7 +50,7 @@ class LoginViewModel extends ChangeNotifier {
 
   String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'A senha deve ter pelo menos 6 caracteres';
+      return 'Por favor, insira a sua senha';
     }
     if (value.length < 6) {
       return 'A senha deve ter pelo menos 6 caracteres';

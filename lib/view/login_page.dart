@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../viewmodel/login_viewmodel.dart';
-import '../models/suggestion_model.dart';
-import '../viewmodel/home_viewmodel.dart';
-import './widgets/logout_dialog.dart';
+import 'package:login_screen_app/viewmodel/login_viewmodel.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -67,17 +64,17 @@ class LoginPage extends StatelessWidget {
                   onPressed: loginViewModel.state == LoginState.loading
                       ? null
                       : () async {
-                          if (formKey.currentState!.validate()) {
-                            final bool isLoggedIn = await loginViewModel.login(
-                              emailController.text,
-                              passwordController.text,
-                            );
+                    if (formKey.currentState!.validate()) {
+                      final bool isLoggedIn = await loginViewModel.login(
+                        emailController.text,
+                        passwordController.text,
+                      );
 
-                            if (context.mounted && isLoggedIn) {
-                              context.go('/home');
-                            }
-                          }
-                        },
+                      if (context.mounted && isLoggedIn) {
+                        context.go('/home');
+                      }
+                    }
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                     minimumSize: const Size(double.infinity, 50),
@@ -86,11 +83,18 @@ class LoginPage extends StatelessWidget {
                     ),
                   ),
                   child: loginViewModel.state == LoginState.loading
-                      ? const CircularProgressIndicator(color: Colors.green)
+                      ? const CircularProgressIndicator(color: Colors.white)
                       : const Text(
-                          'Entrar',
-                          style: TextStyle(fontSize: 18, color: Colors.white),
-                        ),
+                    'Entrar',
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                TextButton(
+                  onPressed: () {
+                    context.go('/signup');
+                  },
+                  child: const Text('Não tem uma conta? Crie uma'),
                 ),
               ],
             ),
