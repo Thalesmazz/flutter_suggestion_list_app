@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "704357971793",
+    "project_id": "suggestion-app-e5128",
+    "storage_bucket": "suggestion-app-e5128.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:704357971793:android:9635d3a0d87ba553838570",
+        "android_client_info": {
+          "package_name": "com.thales.login_screen_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEWqv2Vop4rcvx_-_nFJ_pDrJDUEuyoV8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

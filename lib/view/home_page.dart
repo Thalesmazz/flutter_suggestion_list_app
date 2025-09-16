@@ -23,6 +23,7 @@ class HomePage extends StatelessWidget {
               );
 
               if (shouldLogout == true) {
+                await context.read<HomeViewModel>().logOut();
                 context.go('/login');
               }
             },
